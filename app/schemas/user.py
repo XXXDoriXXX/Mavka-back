@@ -5,8 +5,10 @@ from app.models.user import UserRole
 class UserSignup(BaseModel):
     username: str
     password: str
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    first_name: str
+    last_name: str
+    group_id: int
+
     role: UserRole = UserRole.STUDENT
 
     class Config:

@@ -15,7 +15,6 @@ from app.db.session import get_db
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-db = get_db()
 """users = {
     "admin": {
         "username": "admin",
@@ -31,15 +30,15 @@ db = get_db()
     }
 }"""
 
-def authenticate_user(username: str, password: str):
+def authenticate_user(username: str, password: str, db):
     user = db.query(User).filter_by(username=username).first()
     if not user or not verify_password(password, user["hashed_password"]):
         return None
     return user
 
 @router.post("/login")
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(form_data.username, form_data.password)
+def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_access_token(
@@ -63,6 +62,7 @@ def signup(user: UserSignup, db: Session = Depends(get_db)):
         password_hash=hashed_password,
         first_name=user.first_name,
         last_name=user.last_name,
+        group_id=user.group_id,
         role=user.role,
     )
 
