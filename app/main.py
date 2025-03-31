@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import auth, groups, specialities
+from app.routers import auth, groups, specialities, nets, schedules
 
 app = FastAPI()
 app.add_middleware(
@@ -14,6 +14,9 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(groups.router)
 app.include_router(specialities.router)
+app.include_router(nets.router)
+app.include_router(schedules.router)
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}

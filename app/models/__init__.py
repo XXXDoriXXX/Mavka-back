@@ -9,3 +9,4 @@ from .schedule_week import ScheduleWeek
 from .schedule_group import schedule_group
 from .attendance import Attendance, AttendanceStatus
 from .schedule_template import ScheduleTemplate
+from .report import Report

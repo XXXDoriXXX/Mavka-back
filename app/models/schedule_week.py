@@ -13,7 +13,7 @@ class ScheduleWeek(Base):
     speciality_id: Mapped[int] = mapped_column(ForeignKey("specialities.id"), nullable=False)
     notes: Mapped[str] = mapped_column(String, nullable=True)
 
-    specialty = relationship("Speciality", back_populates="weeks")
+    specialty = relationship("Speciality")
     schedules = relationship("Schedule", back_populates="week")
 
     @property

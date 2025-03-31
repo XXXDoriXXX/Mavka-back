@@ -25,4 +25,4 @@ class Order(Base):
     created_at: Mapped[datetime.datetime] = mapped_column(TIMESTAMP, nullable=False)
 
     client = relationship("User", back_populates="orders")
-    nets = relationship("Net", back_populates="order", cascade="all, delete-orphan")
+    nets = relationship("Net", back_populates="order")
