@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
-from app.schemas.net import NetResponse
+from typing import Optional
 
 class NetPalleteBase(BaseModel):
     name: str
@@ -12,7 +11,7 @@ class NetPalleteCreate(NetPalleteBase):
 
 class NetPalleteResponse(NetPalleteBase):
     id: int
-    nets: Optional[List[NetResponse]] = []
 
     class Config:
         orm_mode = True
+        from_attributes = True
