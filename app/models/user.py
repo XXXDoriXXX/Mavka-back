@@ -25,4 +25,4 @@ class User(Base):
 
     group = relationship("Group", back_populates="students", cascade="all, delete")
 
-    orders = relationship("Order", back_populates="user", cascade="all, delete")
+    orders = relationship("Order", back_populates="client", cascade="all, delete")
