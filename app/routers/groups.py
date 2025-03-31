@@ -1,13 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
+from app.dependencies import require_role
 from app.models import Group
 from app.schemas.group import GroupCreate, GroupResponse
 
 router = APIRouter(prefix="/groups", tags=["groups"])
 
 @router.post("/", response_model=GroupResponse)
-def create_group(group: GroupCreate, db: Session = Depends(get_db)):
+def create_group(group: GroupCreate,
+                 db: Session = Depends(get_db),
+                 current_user = Depends(require_role("admin"))):
     db_group = Group(name=group.name, speciality_id=group.speciality_id)
     db.add(db_group)
     db.commit()
@@ -27,7 +30,10 @@ def get_group(group_id: int, db: Session = Depends(get_db)):
     return db_group
 
 @router.put("/{group_id}", response_model=GroupResponse)
-def update_group(group_id: int, group: GroupCreate, db: Session = Depends(get_db)):
+def update_group(group_id: int,
+                 group: GroupCreate,
+                 db: Session = Depends(get_db),
+                 current_user = Depends(require_role("admin"))):
     db_group = db.query(Group).filter(Group.id == group_id).first()
     if db_group is None:
         raise HTTPException(status_code=404, detail="Group not found")
@@ -39,7 +45,9 @@ def update_group(group_id: int, group: GroupCreate, db: Session = Depends(get_db
     return db_group
 
 @router.delete("/{group_id}", response_model=GroupResponse)
-def delete_group(group_id: int, db: Session = Depends(get_db)):
+def delete_group(group_id: int,
+                 db: Session = Depends(get_db),
+                 current_user = Depends(require_role("admin"))):
     db_group = db.query(Group).filter(Group.id == group_id).first()
     if db_group is None:
         raise HTTPException(status_code=404, detail="Group not found")
