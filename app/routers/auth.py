@@ -1,15 +1,22 @@
 from fastapi import Depends, HTTPException, APIRouter
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
+
+from sqlalchemy.orm import Session
+
+from app.models import User
+from app.schemas.user import UserSignup
 from app.utils.jwt import create_access_token
-from app.utils.security import verify_password
+from app.utils.security import verify_password, hash_password
 from app.dependencies import get_current_user, require_role
+from app.db.session import get_db
+
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-
-users = {
+db = get_db()
+"""users = {
     "admin": {
         "username": "admin",
         "full_name": "Admin User",
@@ -22,10 +29,10 @@ users = {
         "hashed_password": "$2b$12$WHlf0zuqgLVsBsiY.Sjk6u4s6p/aIbpL6HA6fLua9oLn3F5JCkndK",  # userpass
         "role": "user",
     }
-}
+}"""
 
 def authenticate_user(username: str, password: str):
-    user = users.get(username)
+    user = db.query(User).filter_by(username=username).first()
     if not user or not verify_password(password, user["hashed_password"]):
         return None
     return user
@@ -40,6 +47,31 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     return {"access_token": token, "token_type": "bearer"}
+
+@router.post("/signup")
+def signup(user: UserSignup, db: Session = Depends(get_db)):
+
+    db_user = db.query(User).filter(User.username == user.username).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Username already registered")
+
+    hashed_password = hash_password(user.password)
+
+    # Create the new user object
+    new_user = User(
+        username=user.username,
+        password_hash=hashed_password,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        role=user.role,
+    )
+
+    # Add the new user to the database
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return {"message": "User created successfully", "username": new_user.username}
 
 @router.get("/me")
 def read_me(current_user = Depends(get_current_user)):

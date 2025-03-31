@@ -10,4 +10,4 @@ class Group(Base):
     speciality_id: Mapped[int] = mapped_column(Integer, ForeignKey("specialities.id", ondelete="CASCADE"))
 
     speciality = relationship("Speciality", back_populates="groups")
-    students = relationship("Student", back_populates="group")
+    students = relationship("User", back_populates="group")
