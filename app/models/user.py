@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Enum, DateTime
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Integer, String, Enum, DateTime
 import enum
 import datetime
 from app.db.session import Base
@@ -9,14 +10,13 @@ class UserRole(enum.Enum):
     TEACHER = "teacher"
     STUDENT = "student"
 
-
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, nullable=False)
-    password_hash = Column(String, nullable=False)
-    role = Column(Enum(UserRole), nullable=False)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
-    first_name = Column(String, nullable=True)
-    last_name = Column(String, nullable=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    username: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    password_hash: Mapped[str] = mapped_column(String, nullable=False)
+    role: Mapped[UserRole] = mapped_column(Enum(UserRole), nullable=False)
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+    first_name: Mapped[str | None] = mapped_column(String, nullable=True)
+    last_name: Mapped[str | None] = mapped_column(String, nullable=True)
