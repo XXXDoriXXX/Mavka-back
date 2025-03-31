@@ -24,5 +24,6 @@ class User(Base):
     group_id: Mapped[int] = mapped_column(Integer, ForeignKey("groups.id"))
 
     group = relationship("Group", back_populates="students", cascade="all, delete")
+    reports = relationship("Report", back_populates="student", foreign_keys="[Report.student_id]")
 
     orders = relationship("Order", back_populates="client", cascade="all, delete")

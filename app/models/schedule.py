@@ -18,4 +18,4 @@ class Schedule(Base):
     template = relationship("ScheduleTemplate", back_populates="schedules")
     week = relationship("ScheduleWeek", back_populates="schedules")
     teacher = relationship("User")
-    groups = relationship("Group", secondary="schedule_group", back_populates="schedules")
+    groups = relationship("Group", secondary="schedule_group")

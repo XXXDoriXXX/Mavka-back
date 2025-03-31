@@ -35,5 +35,4 @@ class Net(Base):
     created_at: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=False)
 
     pallete = relationship("NetPallete", back_populates="nets")
-
     order = relationship("Order", back_populates="nets")
