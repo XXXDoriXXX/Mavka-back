@@ -78,5 +78,5 @@ def read_me(current_user = Depends(get_current_user)):
     return {"user": current_user}
 
 @router.get("/admin")
-def admin_only(current_user = Depends(require_role("admin"))):
+def admin_only(current_user = Depends(require_role("ADMIN"))):
     return {"message": "Welcome admin!"}
