@@ -36,4 +36,4 @@ class Net(Base):
 
     pallete = relationship("NetPallete", back_populates="nets")
 
-    orders = relationship("Order", back_populates="nets")
+    order = relationship("Order", back_populates="nets")
