@@ -14,8 +14,8 @@ class Report(Base):
     schedule_id: Mapped[int] = mapped_column(ForeignKey("schedules.id", ondelete="CASCADE"), nullable=True)
     verified_by: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
 
-    photo_url: Mapped[datetime.datetime] = mapped_column(String, nullable=True)
-    description: Mapped[datetime.datetime] = mapped_column(String, nullable=True)
+    photo_url: Mapped[str] = mapped_column(String, nullable=True)
+    description: Mapped[str] = mapped_column(String, nullable=True)
     start_time: Mapped[datetime.datetime] = mapped_column(TIMESTAMP, nullable=True)
     end_time: Mapped[datetime.datetime] = mapped_column(TIMESTAMP, nullable=True)
     verified_at: Mapped[datetime.datetime] = mapped_column(TIMESTAMP, nullable=True)
