@@ -30,9 +30,9 @@ router = APIRouter(prefix="/auth", tags=["auth"])
     }
 }"""
 
-def authenticate_user(username: str, password: str, db):
+def authenticate_user(username: str, password: str, db: Session):
     user = db.query(User).filter_by(username=username).first()
-    if not user or not verify_password(password, user["hashed_password"]):
+    if not user or not verify_password(password, user.password_hash):
         return None
     return user
 
@@ -42,7 +42,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_access_token(
-        {"sub": user["username"], "role": user["role"]},
+        {"sub": user.username, "role": str(user.role)},
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     return {"access_token": token, "token_type": "bearer"}
