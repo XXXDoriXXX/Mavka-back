@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 from enum import Enum
+from app.schemas.net_pallete import NetPalleteResponse
 
 
 class NetStatus(str, Enum):
@@ -20,7 +21,6 @@ class NetType(str, Enum):
 class NetBase(BaseModel):
     order_id: int
     type: NetType
-    pallete_id: int
     width: float
     height: float
     status: NetStatus
@@ -36,11 +36,23 @@ class NetBase(BaseModel):
 
 
 class NetCreate(NetBase):
+    pallete_id: int
     pass
 
 
 class NetResponse(NetBase):
     id: int
+    pallete_id: int
 
     class Config:
         orm_mode = True
+        from_attributes = True
+
+
+class NetResponseFull(NetBase):
+    id: int
+    pallete: NetPalleteResponse
+
+    class Config:
+        orm_mode = True
+        from_attributes = True
