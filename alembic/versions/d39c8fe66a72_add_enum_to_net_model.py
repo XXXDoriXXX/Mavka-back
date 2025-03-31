@@ -38,4 +38,4 @@ def downgrade() -> None:
     op.execute("ALTER TABLE nets ALTER COLUMN type TYPE VARCHAR USING type::VARCHAR")
 
     netstatus_enum.drop(op.get_bind(), checkfirst=True)
-    netstatus_enum.drop(op.get_bind(), checkfirst=True)
+    nettype_enum.drop(op.get_bind(), checkfirst=True)
