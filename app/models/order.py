@@ -14,3 +14,5 @@ class Order(Base):
     client_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
 
     client = relationship("User", back_populates="orders")
+
+    nets = relationship("Net", back_populates="orders", cascade="all, delete")
