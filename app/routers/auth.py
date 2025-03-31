@@ -12,7 +12,7 @@ from app.dependencies import get_current_user, require_role
 from app.db.session import get_db
 
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 600
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 """users = {
@@ -56,7 +56,6 @@ def signup(user: UserSignup, db: Session = Depends(get_db)):
 
     hashed_password = hash_password(user.password)
 
-    # Create the new user object
     new_user = User(
         username=user.username,
         password_hash=hashed_password,
@@ -66,7 +65,6 @@ def signup(user: UserSignup, db: Session = Depends(get_db)):
         role=user.role,
     )
 
-    # Add the new user to the database
     db.add(new_user)
     db.commit()
     db.refresh(new_user)

@@ -5,15 +5,17 @@ from app.db.session import get_db
 from app.dependencies import require_role
 from app.models import Speciality
 from app.schemas.speciality import SpecialityCreate, SpecialityResponse
+from app.dependencies import require_role
 
 router = APIRouter(prefix="/specialities", tags=["specialities"])
 
 
 @router.post("/", response_model=SpecialityResponse)
-def create_speciality(speciality: SpecialityCreate,
-                      db: Session = Depends(get_db),
-                      current_user=Depends(require_role("admin"))):
-    db_speciality = Speciality(name=speciality.name)
+def create_speciality(
+        speciality: SpecialityCreate,
+        db: Session = Depends(get_db),
+        current_user=Depends(require_role("admin"))):
+    db_speciality = Speciality(**speciality.dict())
     db.add(db_speciality)
     db.commit()
     db.refresh(db_speciality)
@@ -37,24 +39,28 @@ def get_speciality(speciality_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{speciality_id}", response_model=SpecialityResponse)
-def update_speciality(speciality_id: int,
-                      speciality: SpecialityCreate,
-                      db: Session = Depends(get_db),
-                      current_user=Depends(require_role("admin"))):
+def update_speciality(
+        speciality_id: int,
+        speciality: SpecialityCreate,
+        db: Session = Depends(get_db),
+        current_user=Depends(require_role("admin"))):
     db_speciality = db.query(Speciality).filter(Speciality.id == speciality_id).first()
     if db_speciality is None:
         raise HTTPException(status_code=404, detail="Speciality not found")
 
-    db_speciality.name = speciality.name
+    for key, value in speciality.dict(exclude_unset=True).items():
+        setattr(db_speciality, key, value)
+
     db.commit()
     db.refresh(db_speciality)
     return db_speciality
 
 
 @router.delete("/{speciality_id}", response_model=SpecialityResponse)
-def delete_speciality(speciality_id: int,
-                      db: Session = Depends(get_db),
-                      current_user=Depends(require_role("admin"))):
+def delete_speciality(
+        speciality_id: int,
+        db: Session = Depends(get_db),
+        current_user=Depends(require_role("admin"))):
     db_speciality = db.query(Speciality).filter(Speciality.id == speciality_id).first()
     if db_speciality is None:
         raise HTTPException(status_code=404, detail="Speciality not found")

@@ -11,7 +11,7 @@ router = APIRouter(prefix="/groups", tags=["groups"])
 def create_group(group: GroupCreate,
                  db: Session = Depends(get_db),
                  current_user = Depends(require_role("admin"))):
-    db_group = Group(name=group.name, speciality_id=group.speciality_id)
+    db_group = Group(**group.dict())
     db.add(db_group)
     db.commit()
     db.refresh(db_group)
@@ -38,8 +38,9 @@ def update_group(group_id: int,
     if db_group is None:
         raise HTTPException(status_code=404, detail="Group not found")
 
-    db_group.name = group.name
-    db_group.speciality_id = group.speciality_id
+    for key, value in group.dict(exclude_unset=True).items():
+        setattr(db_group, key, value)
+
     db.commit()
     db.refresh(db_group)
     return db_group
