@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
+from app.dependencies import require_role
 from app.models import Speciality
 from app.schemas.speciality import SpecialityCreate, SpecialityResponse
 from app.dependencies import require_role
@@ -22,7 +23,9 @@ def create_speciality(
 
 
 @router.get("/", response_model=list[SpecialityResponse])
-def get_specialities(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_specialities(skip: int = 0,
+                     limit: int = 100,
+                     db: Session = Depends(get_db)):
     db_specialities = db.query(Speciality).offset(skip).limit(limit).all()
     return db_specialities
 
