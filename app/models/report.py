@@ -22,6 +22,6 @@ class Report(Base):
     created_at: Mapped[datetime.datetime] = mapped_column(TIMESTAMP, default=datetime.datetime.utcnow, nullable=False)
 
     student = relationship("User", back_populates="reports", foreign_keys=[student_id])
-    net = relationship("Net", back_populates="reports", cascade="all, delete-orphan")
+    net = relationship("Net", back_populates="reports")
     schedule = relationship("Schedule")
     verifier = relationship("User", foreign_keys=[verified_by])
